@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#143628" />
+  <title>Admin Panel — Katalog Toko</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen bg-[#f6f5f1] text-stone-900">
+
+  <!-- ==================== LOGIN VIEW ==================== -->
+  <main id="login-view" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white rounded-3xl p-6 sm:p-7 border border-stone-200/80 shadow-xl">
+      <div class="w-12 h-12 rounded-2xl bg-[#143628] text-amber-300 flex items-center justify-center mb-4 shadow-md">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+
+      <h1 class="text-xl font-extrabold text-stone-900">Login Admin Toko</h1>
+      <p class="text-xs text-stone-500 mt-1">
+        Masuk dengan akun Supabase Auth untuk mengelola barang dan harga katalog.
+      </p>
+
+      <div id="login-error" class="hidden mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-medium text-red-700"></div>
+
+      <form id="login-form" class="mt-5 space-y-3.5">
+        <div>
+          <label for="login-email" class="block text-xs font-bold text-stone-700 mb-1.5">Email Admin</label>
+          <input
+            id="login-email"
+            type="email"
+            required
+            placeholder="email@gmail.com"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+          />
+        </div>
+
+        <div>
+          <label for="login-password" class="block text-xs font-bold text-stone-700 mb-1.5">Password</label>
+          <div class="relative">
+            <input
+              id="login-password"
+              type="password"
+              required
+              placeholder="••••••••"
+              class="w-full pl-3.5 pr-11 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+            />
+            <button
+              id="btn-toggle-pass"
+              type="button"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-stone-400 hover:text-stone-700"
+              aria-label="Lihat password"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button
+          id="btn-login-submit"
+          type="submit"
+          class="tactile w-full py-3 rounded-xl bg-[#143628] hover:bg-[#1b4a37] text-white font-bold text-sm shadow-md"
+        >
+          Masuk Dashboard
+        </button>
+      </form>
+
+      <div class="mt-5 pt-4 border-t border-stone-100 text-center">
+        <a href="index.html" class="text-xs font-semibold text-emerald-800 hover:underline">
+          &larr; Kembali ke Katalog Pelanggan
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== DASHBOARD VIEW ==================== -->
+  <div id="dashboard-view" class="hidden pb-24">
+    <!-- Top Header -->
+    <header class="bg-[#143628] text-white px-4 py-4 shadow-md sticky top-0 z-30">
+      <div class="max-w-3xl mx-auto flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <h1 id="admin-store-title" class="text-base sm:text-lg font-extrabold truncate">Admin Toko</h1>
+          <p id="admin-user-email" class="text-[11px] text-emerald-200/85 truncate"></p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a
+            href="index.html"
+            target="_blank"
+            class="tactile px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-xs font-semibold"
+          >
+            Lihat Web
+          </a>
+          <button
+            id="btn-refresh"
+            type="button"
+            class="tactile p-2 rounded-xl bg-white/15 hover:bg-white/25"
+            aria-label="Segarkan data"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </button>
+          <button
+            id="btn-logout"
+            type="button"
+            class="tactile px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/35 text-red-100 text-xs font-semibold border border-red-400/25"
+          >
+            Keluar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 pt-4">
+      <!-- Ringkasan Statistik -->
+      <section class="grid grid-cols-3 gap-2.5 mb-4">
+        <div class="bg-white rounded-2xl p-3 border border-stone-200/80 shadow-sm">
+          <p class="text-[11px] font-semibold text-stone-500">Total Barang</p>
+          <p id="stat-total" class="text-xl font-extrabold text-stone-900 mt-0.5">0</p>
+        </div>
+        <div class="bg-white rounded-2xl p-3 border border-emerald-200/70 shadow-sm">
+          <p class="text-[11px] font-semibold text-emerald-700">Ready</p>
+          <p id="stat-ready" class="text-xl font-extrabold text-emerald-700 mt-0.5">0</p>
+        </div>
+        <div class="bg-white rounded-2xl p-3 border border-stone-200/80 shadow-sm">
+          <p class="text-[11px] font-semibold text-stone-500">Habis</p>
+          <p id="stat-habis" class="text-xl font-extrabold text-red-600 mt-0.5">0</p>
+        </div>
+      </section>
+
+      <!-- Search + Filter Status -->
+      <section class="space-y-2.5 mb-4">
+        <div class="flex gap-2">
+          <div class="relative flex-1">
+            <svg class="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+            </svg>
+            <input
+              id="admin-search"
+              type="search"
+              placeholder="Cari nama barang..."
+              class="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+            />
+          </div>
+          <button
+            id="btn-add-product"
+            type="button"
+            class="tactile shrink-0 px-4 py-2.5 rounded-xl bg-[#143628] hover:bg-[#1b4a37] text-white text-xs sm:text-sm font-bold shadow-md flex items-center gap-1.5"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Tambah</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" data-status="Semua" class="admin-status-filter cat-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-white text-stone-600 border-stone-200">Semua</button>
+          <button type="button" data-status="Ready" class="admin-status-filter cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-white text-stone-600 border-stone-200">Ready</button>
+          <button type="button" data-status="Habis" class="admin-status-filter cat-pill px-3.5 py-1.5 rounded-full text-xs font-semibold border bg-white text-stone-600 border-stone-200">Habis</button>
+        </div>
+      </section>
+
+      <!-- List Produk -->
+      <section id="admin-product-list" class="space-y-2.5"></section>
+
+      <!-- Empty State Admin -->
+      <div id="admin-empty" class="hidden text-center py-12 px-5 bg-white rounded-3xl border border-stone-200/80">
+        <p class="text-sm font-bold text-stone-800">Belum ada barang di daftar ini</p>
+        <p class="text-xs text-stone-500 mt-1">Klik tombol <strong>+ Tambah</strong> di atas untuk memasukkan produk pertama.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODAL TAMBAH / EDIT PRODUK ==================== -->
+  <div id="product-modal" class="sheet-backdrop fixed inset-0 z-50 bg-stone-950/55 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="sheet-panel w-full sm:max-w-md bg-white rounded-t-[28px] sm:rounded-3xl shadow-2xl max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="px-5 pt-4 pb-3 border-b border-stone-100 flex items-center justify-between">
+        <h2 id="modal-title" class="text-base font-extrabold text-stone-900">Tambah Barang Baru</h2>
+        <button id="btn-close-modal" type="button" class="tactile p-1.5 rounded-full bg-stone-100 text-stone-500">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="product-form" class="p-5 space-y-3.5 overflow-y-auto">
+        <div>
+          <label for="field-nama" class="block text-xs font-bold text-stone-700 mb-1">Nama Barang & Ukuran *</label>
+          <input
+            id="field-nama"
+            type="text"
+            required
+            placeholder="Contoh: Minyak Goreng Kita 1 Liter"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="field-kategori" class="block text-xs font-bold text-stone-700 mb-1">Kategori *</label>
+            <input
+              id="field-kategori"
+              type="text"
+              list="kategori-suggestions"
+              required
+              placeholder="Sembako"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+            />
+            <datalist id="kategori-suggestions"></datalist>
+          </div>
+
+          <div>
+            <label for="field-status" class="block text-xs font-bold text-stone-700 mb-1">Status Stok *</label>
+            <select
+              id="field-status"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+            >
+              <option value="Ready">Ready</option>
+              <option value="Habis">Habis</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="field-harga" class="block text-xs font-bold text-stone-700 mb-1">Harga (Angka) *</label>
+            <input
+              id="field-harga"
+              type="number"
+              min="0"
+              step="100"
+              required
+              placeholder="16500"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+            />
+          </div>
+
+          <div>
+            <label for="field-satuan" class="block text-xs font-bold text-stone-700 mb-1">Satuan *</label>
+            <input
+              id="field-satuan"
+              type="text"
+              required
+              placeholder="pcs / kg / pouch"
+              class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+            />
+          </div>
+        </div>
+
+        <!-- Saran Cepat Satuan -->
+        <div class="flex flex-wrap gap-1.5 -mt-1">
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">pcs</button>
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">pouch</button>
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">kg</button>
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">liter</button>
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">renteng</button>
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">dus</button>
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">botol</button>
+          <button type="button" class="satuan-chip px-2.5 py-1 rounded-lg bg-stone-100 text-[11px] font-semibold text-stone-600 hover:bg-stone-200">tabung</button>
+        </div>
+
+        <!-- Link Foto Google + Live Preview -->
+        <div>
+          <label for="field-foto" class="block text-xs font-bold text-stone-700 mb-1">
+            Link Foto Google <span class="font-normal text-stone-400">(Google Images / Share Google Drive)</span>
+          </label>
+          <div class="flex items-center gap-3">
+            <img
+              id="foto-preview"
+              src=""
+              alt="Preview"
+              class="w-14 h-14 rounded-xl object-cover bg-stone-100 border border-stone-200 shrink-0"
+            />
+            <input
+              id="field-foto"
+              type="url"
+              placeholder="Tempel link foto di sini..."
+              class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/25 focus:border-emerald-700"
+            />
+          </div>
+          <p class="text-[10px] text-stone-400 mt-1">
+            Link share Google Drive otomatis dikonversi. Pastikan akses file Drive disetel "Siapa saja yang memiliki link".
+          </p>
+        </div>
+
+        <button
+          id="btn-save-product"
+          type="submit"
+          class="tactile w-full py-3 rounded-xl bg-[#143628] hover:bg-[#1b4a37] text-white font-bold text-sm shadow-md"
+        >
+          Simpan Barang
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL KONFIRMASI HAPUS ==================== -->
+  <div id="delete-modal" class="sheet-backdrop fixed inset-0 z-50 bg-stone-950/55 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="sheet-panel w-full sm:max-w-sm bg-white rounded-t-[28px] sm:rounded-3xl p-5 shadow-2xl">
+      <h3 class="text-base font-extrabold text-stone-900">Hapus Barang?</h3>
+      <p class="text-xs text-stone-500 mt-1.5 leading-relaxed">
+        Barang <strong id="delete-product-name" class="text-stone-800"></strong> akan dihapus permanen dari katalog.
+      </p>
+      <div class="grid grid-cols-2 gap-2.5 mt-5">
+        <button id="btn-cancel-delete" type="button" class="tactile py-2.5 rounded-xl bg-stone-100 text-stone-700 text-xs font-bold">
+          Batal
+        </button>
+        <button id="btn-confirm-delete" type="button" class="tactile py-2.5 rounded-xl bg-red-600 text-white text-xs font-bold">
+          Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
