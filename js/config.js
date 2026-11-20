@@ -11,8 +11,8 @@ window.APP_CONFIG = {
   statusBuka: "Buka Hari Ini",
 
   // 2. Nomor WhatsApp Toko (Wajib diawali 62, tanpa tanda + atau spasi)
-  // Contoh: 6281234567890
-  nomorWA: "6281234567890",
+  // Format internasional Indonesia: 6289671814455
+  nomorWA: "6289671814455",
 
   // 3. Koneksi Supabase (Sudah diisi sesuai proyek 'kelontong' milikmu)
   supabaseUrl: "https://kfqvatkzcsvwmzhftply.supabase.co",
