@@ -55,6 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function initStoreInfo() {
     document.title = `${cfg.namaToko} — Katalog Harga`;
     elStoreName.textContent = cfg.namaToko;
+    const elFooterStore = document.getElementById("footer-store-name");
+    if (elFooterStore) elFooterStore.textContent = cfg.namaToko;
     elStoreDesc.textContent = cfg.deskripsi;
     if (elStoreBadge) elStoreBadge.textContent = cfg.statusBuka || "Buka";
 
