@@ -140,6 +140,57 @@ body {
   border-color: #10b981;
 }
 
+/* Floating Cart Bar (Bottom Bar ala ShopeeFood / Astro) */
+.cart-floating-bar {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 320ms var(--ease-spring), opacity 240ms ease;
+  will-change: transform, opacity;
+}
+.cart-floating-bar.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Banner Carousel */
+.carousel-track {
+  display: flex;
+  transition: transform 400ms var(--ease-out-smooth);
+  will-change: transform;
+}
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+.carousel-dot {
+  transition: all 250ms ease;
+}
+.carousel-dot.active {
+  width: 20px;
+  background-color: #143628;
+}
+
+/* Modern Card Glow & Hover */
+.ecom-card {
+  transition: transform 200ms var(--ease-out-smooth), box-shadow 220ms ease, border-color 200ms ease;
+}
+.ecom-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -4px rgba(20, 54, 40, 0.10), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* Cart Item Bump animation */
+@keyframes cartBump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.cart-bump {
+  animation: cartBump 300ms var(--ease-spring);
+}
+
 /* Floating Scroll-to-Top visibility */
 #btn-scroll-top {
   transition: opacity 220ms ease, transform 220ms var(--ease-spring);
