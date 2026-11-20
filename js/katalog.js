@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Order Details (Customer Info)
   let deliveryMethod = "antar"; // 'antar' | 'ambil'
   let paymentMethod = "Tunai / COD";
+  let cashChangeOption = "Uang Pas";
 
   // ---------------------------------------------------------
   // DOM REFERENCES
@@ -115,15 +116,38 @@ document.addEventListener("DOMContentLoaded", () => {
   const elBtnScrollTop = document.getElementById("btn-scroll-top");
 
   // ---------------------------------------------------------
-  // 1. INISIALISASI IDENTITAS TOKO
+  // 1. INISIALISASI IDENTITAS TOKO & STATUS BUKA OTOMATIS
   // ---------------------------------------------------------
+  function updateStoreOpenStatus() {
+    const now = new Date();
+    const hour = now.getHours();
+    const isOpen = hour >= 7 && hour < 21; // Buka 07.00 - 21.00 WIB
+
+    if (isOpen) {
+      if (elStoreBadge) elStoreBadge.textContent = "Buka Sekarang";
+      if (elStoreBadge && elStoreBadge.parentElement) {
+        elStoreBadge.parentElement.className =
+          "tactile inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 text-emerald-200 text-[11px] font-semibold";
+      }
+    } else {
+      if (elStoreBadge) elStoreBadge.textContent = "Toko Tutup (Buka 07.00)";
+      if (elStoreBadge && elStoreBadge.parentElement) {
+        elStoreBadge.parentElement.className =
+          "tactile inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/25 text-amber-200 text-[11px] font-semibold border border-amber-400/30";
+      }
+    }
+    return isOpen;
+  }
+
   function initStore() {
     document.title = `${cfg.namaToko} — Katalog Belanja Mudah`;
     if (elStoreName) elStoreName.textContent = cfg.namaToko;
     if (elFooterStore) elFooterStore.textContent = cfg.namaToko;
     if (elStoreDesc) elStoreDesc.textContent = cfg.deskripsi;
-    if (elStoreBadge) elStoreBadge.textContent = cfg.statusBuka || "Buka Hari Ini";
     if (elStoreHoursQuick) elStoreHoursQuick.textContent = cfg.jamBuka || "07.00 - 21.00 WIB";
+
+    updateStoreOpenStatus();
+    setInterval(updateStoreOpenStatus, 60000); // Cek status tiap 1 menit
 
     // Setup Info Modal text
     if (elModalInfoTitle) elModalInfoTitle.textContent = cfg.namaToko;
@@ -783,7 +807,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Payment chips
+  // Payment chips & Kembalian
+  const elWrapperKembalian = document.getElementById("wrapper-kembalian");
+  const elCashChips = document.querySelectorAll(".cash-chip");
+
+  elCashChips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      cashChangeOption = chip.getAttribute("data-cash") || "Uang Pas";
+      elCashChips.forEach((c) => {
+        c.className =
+          "cash-chip tactile px-2.5 py-1 rounded-xl text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200";
+      });
+      chip.className =
+        "cash-chip tactile px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-700 text-white border border-emerald-800";
+    });
+  });
+
   elPayChips.forEach((chip) => {
     chip.addEventListener("click", () => {
       paymentMethod = chip.getAttribute("data-pay") || "Tunai / COD";
@@ -791,6 +830,14 @@ document.addEventListener("DOMContentLoaded", () => {
         c.className = "pay-chip tactile px-3 py-1.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200";
       });
       chip.className = "pay-chip tactile px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-800 text-white";
+
+      if (elWrapperKembalian) {
+        if (paymentMethod === "Tunai / COD") {
+          elWrapperKembalian.classList.remove("hidden");
+        } else {
+          elWrapperKembalian.classList.add("hidden");
+        }
+      }
     });
   });
 
@@ -841,7 +888,16 @@ document.addEventListener("DOMContentLoaded", () => {
         lines.push(`• Alamat / Patokan: ${buyerAddress}`);
       }
 
-      lines.push(`• Pembayaran: ${paymentMethod}`);
+      if (paymentMethod === "Tunai / COD") {
+        lines.push(`• Pembayaran: 💵 Tunai / COD (${cashChangeOption})`);
+      } else {
+        lines.push(`• Pembayaran: ${paymentMethod}`);
+      }
+
+      const isStoreOpen = updateStoreOpenStatus();
+      if (!isStoreOpen) {
+        lines.push(`⚠️ *Catatan Waktu:* Pesanan dikirim di luar jam buka toko (07.00 - 21.00 WIB), mohon diproses saat toko buka ya.`);
+      }
 
       if (orderNote) {
         lines.push(`• Catatan: ${orderNote}`);
@@ -1107,6 +1163,39 @@ document.addEventListener("DOMContentLoaded", () => {
   if (elBtnScrollTop) {
     elBtnScrollTop.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  // ---------------------------------------------------------
+  // PWA INSTALL BANNER PROMPT
+  // ---------------------------------------------------------
+  let deferredPrompt = null;
+  const elPwaBanner = document.getElementById("pwa-install-banner");
+  const elBtnPwaInstall = document.getElementById("btn-pwa-install");
+  const elBtnPwaDismiss = document.getElementById("btn-pwa-dismiss");
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (elPwaBanner) elPwaBanner.classList.remove("hidden");
+  });
+
+  if (elBtnPwaInstall) {
+    elBtnPwaInstall.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        showToast("Aplikasi berhasil dipasang di HP!", "success");
+      }
+      deferredPrompt = null;
+      if (elPwaBanner) elPwaBanner.classList.add("hidden");
+    });
+  }
+
+  if (elBtnPwaDismiss) {
+    elBtnPwaDismiss.addEventListener("click", () => {
+      if (elPwaBanner) elPwaBanner.classList.add("hidden");
     });
   }
 

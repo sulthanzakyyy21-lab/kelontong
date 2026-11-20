@@ -6,6 +6,14 @@
   <meta name="theme-color" content="#143628" />
   <title>Katalog Toko Kelontong — Belanja Mudah via WhatsApp</title>
 
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Kelontong" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
   <!-- Font Modern Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,6 +26,24 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="min-h-screen bg-[#f8faf7] text-stone-900 pb-32 selection:bg-emerald-200 selection:text-emerald-950">
+
+  <!-- PWA INSTALL BANNER (Muncul di Android / PC jika belum dipasang) -->
+  <aside id="pwa-install-banner" class="hidden bg-[#102a1f] text-white px-4 py-2.5 border-b border-emerald-900/60 text-xs">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="text-lg shrink-0">📲</span>
+        <p class="truncate"><strong class="font-bold text-amber-300">Pasang Aplikasi Toko:</strong> Buka katalog lebih cepat langsung dari layar HP-mu!</p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="btn-pwa-install" type="button" class="tactile px-3 py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-900 font-extrabold text-xs shadow-xs">
+          Pasang
+        </button>
+        <button id="btn-pwa-dismiss" type="button" class="p-1 text-emerald-300 hover:text-white" aria-label="Tutup">
+          ✕
+        </button>
+      </div>
+    </div>
+  </aside>
 
   <!-- TOP HEADER -->
   <header class="bg-[#143628] text-white pt-4 pb-5 px-4 rounded-b-[28px] shadow-lg sticky top-0 z-40">
@@ -509,6 +535,22 @@
             </div>
           </div>
 
+          <!-- Pilihan Uang Kembalian (Khusus Tunai / COD) -->
+          <div id="wrapper-kembalian">
+            <label class="block text-xs font-bold text-stone-700 mb-1.5">Pecahan Uang yang Disiapkan (Kembalian)</label>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-cash="Uang Pas" class="cash-chip tactile px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-700 text-white border border-emerald-800">
+                Uang Pas
+              </button>
+              <button type="button" data-cash="Pecahan Rp 50.000" class="cash-chip tactile px-2.5 py-1 rounded-xl text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200">
+                Rp 50.000
+              </button>
+              <button type="button" data-cash="Pecahan Rp 100.000" class="cash-chip tactile px-2.5 py-1 rounded-xl text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200">
+                Rp 100.000
+              </button>
+            </div>
+          </div>
+
           <!-- Catatan Tambahan -->
           <div>
             <label for="cart-order-note" class="block text-xs font-bold text-stone-700 mb-1">
@@ -712,5 +754,16 @@
   <script src="js/config.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/katalog.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

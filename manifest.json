@@ -1,0 +1,25 @@
+{
+  "name": "Toko Kelontong Berkah",
+  "short_name": "Kelontong",
+  "description": "Katalog Belanja Sembako & Kebutuhan Harian via WhatsApp",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8faf7",
+  "theme_color": "#143628",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
