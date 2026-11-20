@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------------------------------
-  // 3. AMBIL PRODUK DARI SUPABASE
+  // 3. AMBIL PRODUK DARI SUPABASE (DENGAN FALLBACK SIMULASI)
   // ---------------------------------------------------------
   async function loadProducts() {
     renderSkeletons(8);
@@ -195,19 +195,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (error) throw error;
 
-      allProducts = Array.isArray(data) ? data : [];
+      if (Array.isArray(data) && data.length > 0) {
+        allProducts = data;
+      } else {
+        // Jika database masih kosong, aktifkan 50 data simulasi toko
+        allProducts = getFallbackProducts();
+      }
+
       renderCategoryPills();
       renderProducts();
     } catch (err) {
-      console.error("Gagal memuat katalog:", err);
-      if (elProductGrid) elProductGrid.innerHTML = "";
-      if (elProductGrid) elProductGrid.classList.add("hidden");
-      if (elErrorState) elErrorState.classList.remove("hidden");
-      if (elErrorText) {
-        elErrorText.textContent = err.message || "Pastikan tabel 'produk' dan koneksi internet aktif.";
-      }
-      if (elResultCount) elResultCount.textContent = "Gagal memuat data";
+      console.warn("Memuat 50 data simulasi toko kelontong:", err);
+      allProducts = getFallbackProducts();
+      renderCategoryPills();
+      renderProducts();
     }
+  }
+
+  function getFallbackProducts() {
+    return [
+      // 1. SEMBAKO (10 Barang)
+      { id: "sim-1", nama: "Beras Ramos Premium 5 kg", kategori: "Sembako", harga: 74000, satuan: "karung", status: "Ready", foto_url: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-2", nama: "Minyak Goreng Bimoli 2 Liter", kategori: "Sembako", harga: 36500, satuan: "pouch", status: "Ready", foto_url: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-3", nama: "Minyak Goreng Tropical Botol 1 Liter", kategori: "Sembako", harga: 19000, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-4", nama: "Gula Pasir Gulaku Tebu 1 kg", kategori: "Sembako", harga: 17500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-5", nama: "Telur Ayam Negeri Segar 1 kg", kategori: "Sembako", harga: 28000, satuan: "kg", status: "Ready", foto_url: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-6", nama: "Tepung Terigu Segitiga Biru 1 kg", kategori: "Sembako", harga: 12500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-7", nama: "Indomie Goreng Spesial 85g", kategori: "Sembako", harga: 3500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1612927601601-6638404737ce?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-8", nama: "Mie Sedaap Soto Madura 75g", kategori: "Sembako", harga: 3200, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1612927601601-6638404737ce?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-9", nama: "Santan Kelapa Siap Pakai Kara 65 ml", kategori: "Sembako", harga: 3500, satuan: "kotak", status: "Ready", foto_url: "https://images.unsplash.com/photo-1584947920745-f09d4370a6c0?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-10", nama: "Garam Beryodium Dolpin 250g", kategori: "Sembako", harga: 3000, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1518110903415-467f53cf8998?w=500&auto=format&fit=crop&q=80" },
+
+      // 2. MINUMAN (10 Barang)
+      { id: "sim-11", nama: "Air Mineral Aqua Botol 600 ml", kategori: "Minuman", harga: 3500, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-12", nama: "Air Mineral Le Minerale 600 ml", kategori: "Minuman", harga: 3500, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-13", nama: "Teh Pucuk Harum Melati 350 ml", kategori: "Minuman", harga: 4000, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-14", nama: "Kopi Good Day Cappuccino 25g", kategori: "Minuman", harga: 2500, satuan: "sachet", status: "Ready", foto_url: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-15", nama: "Susu Ultra Milk UHT Cokelat 250 ml", kategori: "Minuman", harga: 6500, satuan: "kotak", status: "Ready", foto_url: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-16", nama: "Teh Botol Sosro Kotak 250 ml", kategori: "Minuman", harga: 4000, satuan: "kotak", status: "Ready", foto_url: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-17", nama: "Floridina Orange Juice 350 ml", kategori: "Minuman", harga: 3500, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-18", nama: "Pocari Sweat Ion Water 500 ml", kategori: "Minuman", harga: 8000, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-19", nama: "Larutan Cap Kaki Tiga Jambu 320 ml", kategori: "Minuman", harga: 7500, satuan: "kaleng", status: "Ready", foto_url: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-20", nama: "Coca-Cola Rasa Original 390 ml", kategori: "Minuman", harga: 5500, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&auto=format&fit=crop&q=80" },
+
+      // 3. MAKANAN & SNACK (10 Barang)
+      { id: "sim-21", nama: "Biskuit Roma Kelapa 300g", kategori: "Makanan & Snack", harga: 11500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-22", nama: "Wafer Nabati Richeese Keju 132g", kategori: "Makanan & Snack", harga: 8500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-23", nama: "Biskuit Oreo Vanilla Roll 119g", kategori: "Makanan & Snack", harga: 9000, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-24", nama: "Wafer Cokelat Beng-Beng 25g", kategori: "Makanan & Snack", harga: 2500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-25", nama: "Keripik Kentang Chitato Sapi Panggang 68g", kategori: "Makanan & Snack", harga: 11500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-26", nama: "Snack Taro Net Seaweed 65g", kategori: "Makanan & Snack", harga: 6500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-27", nama: "Wafer Tango Cokelat 110g", kategori: "Makanan & Snack", harga: 7500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-28", nama: "Cokelat Batang SilverQueen Cashew 58g", kategori: "Makanan & Snack", harga: 15000, satuan: "batang", status: "Ready", foto_url: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-29", nama: "Permen Kopi Kopiko Bag 150g", kategori: "Makanan & Snack", harga: 8000, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-30", nama: "Biskuit Khong Guan Classic Mini 300g", kategori: "Makanan & Snack", harga: 24000, satuan: "kaleng", status: "Habis", foto_url: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&auto=format&fit=crop&q=80" },
+
+      // 4. SABUN & KEBERSIHAN (10 Barang)
+      { id: "sim-31", nama: "Sabun Mandi Batang Lifebuoy 85g", kategori: "Sabun & Kebersihan", harga: 4500, satuan: "batang", status: "Ready", foto_url: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-32", nama: "Sabun Mandi Cair Biore Pure Mild 450 ml", kategori: "Sabun & Kebersihan", harga: 23500, satuan: "pouch", status: "Ready", foto_url: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-33", nama: "Shampo Sunsilk Black Shine 160 ml", kategori: "Sabun & Kebersihan", harga: 21000, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-34", nama: "Pasta Gigi Pepsodent Pencegah Gigi Berlubang 190g", kategori: "Sabun & Kebersihan", harga: 13500, satuan: "tube", status: "Ready", foto_url: "https://images.unsplash.com/photo-1559591937-e10c5980753d?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-35", nama: "Deterjen Bubuk Rinso Molto Anti Noda 770g", kategori: "Sabun & Kebersihan", harga: 21500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-36", nama: "Deterjen Daia Bunga Semerbak 850g", kategori: "Sabun & Kebersihan", harga: 18000, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-37", nama: "Sabun Cuci Piring Sunlight Jeruk Nipis 650 ml", kategori: "Sabun & Kebersihan", harga: 12500, satuan: "pouch", status: "Ready", foto_url: "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-38", nama: "Pembersih Lantai Karbol Wipol Wangi 750 ml", kategori: "Sabun & Kebersihan", harga: 16500, satuan: "pouch", status: "Ready", foto_url: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-39", nama: "Downy Pelembut Pakaian Mystique 650 ml", kategori: "Sabun & Kebersihan", harga: 22000, satuan: "pouch", status: "Ready", foto_url: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-40", nama: "Sikat Gigi Formula Sensitive Care isi 3", kategori: "Sabun & Kebersihan", harga: 12000, satuan: "pack", status: "Ready", foto_url: "https://images.unsplash.com/photo-1559591937-e10c5980753d?w=500&auto=format&fit=crop&q=80" },
+
+      // 5. KEBUTUHAN RUMAH & DAPUR (10 Barang)
+      { id: "sim-41", nama: "Gas Elpiji 3 kg (Melon) Isi Ulang", kategori: "Kebutuhan Rumah", harga: 22000, satuan: "tabung", status: "Ready", foto_url: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-42", nama: "Galon Air Aqua 19 Liter Refill Asli", kategori: "Kebutuhan Rumah", harga: 21000, satuan: "galon", status: "Ready", foto_url: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-43", nama: "Minyak Telon Lang Plus 60 ml", kategori: "Kebutuhan Rumah", harga: 23000, satuan: "botol", status: "Ready", foto_url: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-44", nama: "Pembasmi Nyamuk Baygon Aerosol 600 ml", kategori: "Kebutuhan Rumah", harga: 38000, satuan: "kaleng", status: "Ready", foto_url: "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-45", nama: "Tisu Wajah Paseo Smart Facial 250 sheets", kategori: "Kebutuhan Rumah", harga: 14500, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-46", nama: "Baterai ABC Alkaline AA isi 2", kategori: "Kebutuhan Rumah", harga: 13000, satuan: "pack", status: "Ready", foto_url: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-47", nama: "Korek Api Tokai Gas Original", kategori: "Kebutuhan Rumah", harga: 4000, satuan: "pcs", status: "Ready", foto_url: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-48", nama: "Lilin Putih Jumbo Penerang isi 6", kategori: "Kebutuhan Rumah", harga: 8000, satuan: "bungkus", status: "Ready", foto_url: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-49", nama: "Kantong Plastik Sampah Hitam Roll", kategori: "Kebutuhan Rumah", harga: 12000, satuan: "roll", status: "Ready", foto_url: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80" },
+      { id: "sim-50", nama: "Kapur Barus Swallow Toilet Ball isi 5", kategori: "Kebutuhan Rumah", harga: 15000, satuan: "pack", status: "Habis", foto_url: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=80" }
+    ];
   }
 
   function renderSkeletons(count = 8) {
